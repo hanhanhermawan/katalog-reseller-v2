@@ -131,6 +131,7 @@
       let nextPageUrl = baseUrl + "/seller/api/v1/products/websites?limit=12"; // halaman awal
       let isLoading = false;
       let currentCategoryId = null;
+      const defaultCategoryName = "Wedding";
 
       async function loadThemes(reset = false) {
         isLoading = true;
@@ -215,39 +216,69 @@ if (reset) {
 
       // Fetch categories
       async function loadCategories() {
-        const categoriesContainer = document.getElementById("categories");
+  const categoriesContainer = document.getElementById("categories");
 
-        try {
-          const response = await fetch(categoryUrl);
-          if (!response.ok) throw new Error("Gagal mengambil data kategori");
+  try {
+    const response = await fetch(categoryUrl);
+    if (!response.ok) throw new Error("Gagal mengambil data kategori");
 
-          const result = await response.json();
-          const categories = result.data || [];
+    const result = await response.json();
+    const categories = result.data || [];
 
-          categories.forEach((category) => {
-            const buttonCategory = document.createElement("button");
-            buttonCategory.className =
-              "btn text-sm sm:text-base inline-flex items-center text-center justify-center rounded h-8 px-2 bg-secondary hover:bg-secondary m-1 hover:cursor-pointer";
-            buttonCategory.textContent = category.name;
+    // tombol ALL (menampilkan semua tema)
+const allButton = document.createElement("button");
 
-            // Saat tombol diklik, set categoryId dan muat ulang tema
-            buttonCategory.addEventListener("click", () => {
-              currentCategoryId = category.id;
-              isLoading = false;
-              loadThemes(true);
-              console.log("click");
-            });
+allButton.className =
+  "btn text-sm sm:text-base inline-flex items-center text-center justify-center rounded h-8 px-2 bg-secondary hover:bg-secondary m-1 hover:cursor-pointer";
 
-            categoriesContainer.appendChild(buttonCategory);
-          });
-        } catch (error) {
-          console.error(error);
-        }
+allButton.textContent = "All";
+
+allButton.addEventListener("click", () => {
+  currentCategoryId = null; // null = semua kategori
+  isLoading = false;
+  loadThemes(true);
+});
+
+categoriesContainer.appendChild(allButton);
+
+    categories.forEach((category) => {
+      const buttonCategory = document.createElement("button");
+
+      buttonCategory.className =
+        "btn text-sm sm:text-base inline-flex items-center text-center justify-center rounded h-8 px-2 bg-secondary hover:bg-secondary m-1 hover:cursor-pointer";
+
+      buttonCategory.textContent = category.name;
+
+      // otomatis pilih Wedding saat pertama kali load
+      if (
+        category.name.trim().toLowerCase() ===
+        defaultCategoryName.toLowerCase()
+      ) {
+        currentCategoryId = category.id;
       }
 
+      // saat tombol kategori diklik
+      buttonCategory.addEventListener("click", () => {
+        currentCategoryId = category.id;
+        isLoading = false;
+        loadThemes(true);
+      });
+
+      categoriesContainer.appendChild(buttonCategory);
+    });
+
+    // setelah kategori selesai dibuat, langsung load tema Wedding
+    if (currentCategoryId) {
+      loadThemes(true);
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat memuat kategori.");
+  }
+}
       // Load pertama kali
-      loadCategories();
-      loadThemes();
+loadCategories();
     </script>
     <script>
 document.addEventListener("DOMContentLoaded", function () {
