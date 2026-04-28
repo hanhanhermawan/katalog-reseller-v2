@@ -525,13 +525,17 @@
         const btn = document.getElementById("loadMore");
         btn.textContent = "Loading...";
 
-        if (reset) {
-          container.innerHTML = "";
-          nextPageUrl = `${baseUrl}/seller/api/v1/products/websites?limit=12`;
-          if (currentCategoryId) {
-            nextPageUrl += `&categoryId=${currentCategoryId}`;
-          }
-        }
+if (reset) {
+  container.innerHTML = "";
+  nextPageUrl = `${baseUrl}/seller/api/v1/products/websites?limit=12`;
+
+  if (currentCategoryId) {
+    nextPageUrl += `&categoryId=${currentCategoryId}`;
+  }
+
+  // penting: tampilkan lagi tombol saat pindah kategori
+  btn.style.display = "inline-flex";
+}
 
         if (!nextPageUrl) {
           isLoading = false;
@@ -631,7 +635,7 @@
       loadCategories();
       loadThemes();
     </script>
-    <script>
+    <!-- <script>
 document.addEventListener("DOMContentLoaded", function () {
     const hideButton = setInterval(() => {
         const buttons = document.querySelectorAll("button");
@@ -643,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }, 500);
 });
-</script>
+</script> -->
 </body>
   </body>
 </html>
